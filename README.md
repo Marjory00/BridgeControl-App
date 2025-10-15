@@ -70,7 +70,7 @@ The concept of a unified, predictive, and multi-modal traffic control dashboard 
 
 ## 📁 File Structure
 
-The project is structured with a clear separation of concerns, utilizing the main folder `WorkPay` as the root for Git version control.
+The project is structured with a clear separation of concerns, utilizing the main folder `BridgeControl` as the root for Git version control.
 
 ```
  /BridgeControl-App
