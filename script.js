@@ -1,281 +1,268 @@
-// --- 1. D3.JS MOCK DATA (Expanded) ---
-
-// Simulated daily traffic volume and speed data over 24 hours (0-23)
-// New fields: ped_vol, bike_vol
+// --- 1. D3.JS MOCK DATA ---
 const mockTrafficData = [
-    { hour: 0, count: 500, speed: 40, incident: false, ped_vol: 50, bike_vol: 30 },
-    { hour: 1, count: 350, speed: 45, incident: false, ped_vol: 30, bike_vol: 20 },
-    { hour: 2, count: 200, speed: 50, incident: false, ped_vol: 20, bike_vol: 10 },
-    { hour: 3, count: 180, speed: 50, incident: false, ped_vol: 10, bike_vol: 5 },
-    { hour: 4, count: 400, speed: 40, incident: false, ped_vol: 20, bike_vol: 15 },
-    { hour: 5, count: 1200, speed: 30, incident: false, ped_vol: 100, bike_vol: 50 },
-    { hour: 6, count: 3500, speed: 18, incident: false, ped_vol: 300, bike_vol: 150 },
-    { hour: 7, count: 5800, speed: 8, incident: false, ped_vol: 500, bike_vol: 200 },
-    { hour: 8, count: 6500, speed: 4, incident: true, ped_vol: 700, bike_vol: 350 }, // AM Rush + Stand Still + Accident
-    { hour: 9, count: 5100, speed: 10, incident: false, ped_vol: 650, bike_vol: 300 },
-    { hour: 10, count: 4000, speed: 25, incident: false, ped_vol: 800, bike_vol: 250 }, // Best time to drive
-    { hour: 11, count: 3800, speed: 35, incident: false, ped_vol: 900, bike_vol: 200 }, // Best time to drive
-    { hour: 12, count: 3500, speed: 38, incident: false, ped_vol: 1000, bike_vol: 180 }, // Mid-day peak peds
-    { hour: 13, count: 3700, speed: 35, incident: false, ped_vol: 1100, bike_vol: 170 },
-    { hour: 14, count: 4200, speed: 30, incident: false, ped_vol: 950, bike_vol: 160 },
-    { hour: 15, count: 5000, speed: 20, incident: false, ped_vol: 700, bike_vol: 250 },
-    { hour: 16, count: 6200, speed: 15, incident: false, ped_vol: 500, bike_vol: 300 },
-    { hour: 17, count: 7000, speed: 6, incident: false, ped_vol: 400, bike_vol: 450 }, // PM Rush Hour + Bike Peak
-    { hour: 18, count: 6800, speed: 5, incident: false, ped_vol: 350, bike_vol: 400 }, // Near Stand Still
-    { hour: 19, count: 5500, speed: 15, incident: false, ped_vol: 300, bike_vol: 300 },
-    { hour: 20, count: 4100, speed: 25, incident: false, ped_vol: 200, bike_vol: 200 },
-    { hour: 21, count: 3000, speed: 35, incident: false, ped_vol: 150, bike_vol: 150 },
-    { hour: 22, count: 1800, speed: 40, incident: false, ped_vol: 100, bike_vol: 100 },
-    { hour: 23, count: 900, speed: 45, incident: false, ped_vol: 70, bike_vol: 50 }
+    // hour, count, speed, incident (bool), ped_vol, bike_vol, co2
+    { hour: 0, count: 500, speed: 40, incident: false, ped_vol: 50, bike_vol: 30, co2: 700 },
+    { hour: 1, count: 350, speed: 45, incident: false, ped_vol: 30, bike_vol: 20, co2: 650 },
+    { hour: 2, count: 200, speed: 50, incident: false, ped_vol: 20, bike_vol: 10, co2: 600 },
+    { hour: 3, count: 180, speed: 50, incident: false, ped_vol: 10, bike_vol: 5, co2: 610 },
+    { hour: 4, count: 400, speed: 40, incident: false, ped_vol: 20, bike_vol: 15, co2: 680 },
+    { hour: 5, count: 1200, speed: 30, incident: false, ped_vol: 100, bike_vol: 50, co2: 850 },
+    { hour: 6, count: 3500, speed: 18, incident: false, ped_vol: 300, bike_vol: 150, co2: 1100 },
+    { hour: 7, count: 5800, speed: 8, incident: false, ped_vol: 500, bike_vol: 200, co2: 1400 },
+    { hour: 8, count: 6500, speed: 4, incident: true, ped_vol: 700, bike_vol: 350, co2: 1650 }, // Critical Hour
+    { hour: 9, count: 5100, speed: 10, incident: false, ped_vol: 650, bike_vol: 300, co2: 1350 },
+    { hour: 10, count: 4000, speed: 25, incident: false, ped_vol: 800, bike_vol: 250, co2: 1100 },
+    { hour: 11, count: 3800, speed: 35, incident: false, ped_vol: 900, bike_vol: 200, co2: 950 },
+    { hour: 12, count: 3500, speed: 38, incident: false, ped_vol: 1000, bike_vol: 180, co2: 800 },
+    { hour: 13, count: 3700, speed: 35, incident: false, ped_vol: 1100, bike_vol: 170, co2: 850 },
+    { hour: 14, count: 4200, speed: 30, incident: false, ped_vol: 950, bike_vol: 160, co2: 980 },
+    { hour: 15, count: 5000, speed: 20, incident: false, ped_vol: 700, bike_vol: 250, co2: 1150 },
+    { hour: 16, count: 6200, speed: 15, incident: false, ped_vol: 500, bike_vol: 300, co2: 1400 },
+    { hour: 17, count: 7000, speed: 6, incident: false, ped_vol: 400, bike_vol: 450, co2: 1700 }, // Critical Hour
+    { hour: 18, count: 6800, speed: 5, incident: false, ped_vol: 350, bike_vol: 400, co2: 1600 },
+    { hour: 19, count: 5500, speed: 15, incident: false, ped_vol: 300, bike_vol: 300, co2: 1300 },
+    { hour: 20, count: 4100, speed: 25, incident: false, ped_vol: 200, bike_vol: 200, co2: 1000 },
+    { hour: 21, count: 3000, speed: 35, incident: false, ped_vol: 150, bike_vol: 150, co2: 850 },
+    { hour: 22, count: 1800, speed: 40, incident: false, ped_vol: 100, bike_vol: 100, co2: 750 },
+    { hour: 23, count: 900, speed: 45, incident: false, ped_vol: 70, bike_vol: 50, co2: 700 }
 ];
-
-// Simplified Historical Average for comparison
 const historicalAverage = mockTrafficData.map(d => ({ hour: d.hour, count: d.count * 0.95 }));
+// Updated colors for light mode (matching the CSS legend)
+const speedColorScale = d3.scaleThreshold().domain([5, 15, 35]).range(['#D50000', '#FF3D00', '#FFD600', '#00C853']); 
 
-// --- 2. D3.JS CHART SETUP (Same as previous, using a drawing function) ---
 
+// --- 2. D3.JS CHART SETUP ---
+// NOTE: To get correct chart width, this D3 setup should be done AFTER the element is rendered.
 const margin = { top: 20, right: 30, bottom: 50, left: 60 };
-const containerWidth = document.querySelector('.chart-container').clientWidth;
-const width = containerWidth - margin.left - margin.right;
 const height = 350 - margin.top - margin.bottom;
 
 const svg = d3.select("#traffic-chart")
     .append("svg")
-        .attr("width", width + margin.left + margin.right)
-        .attr("height", height + margin.top + margin.bottom)
+    .attr("height", height + margin.top + margin.bottom)
     .append("g")
-        .attr("transform", `translate(${margin.left},${margin.top})`);
+    .attr("transform", `translate(${margin.left},${margin.top})`);
 
-// Define Scales
-const x = d3.scaleLinear()
-    .domain(d3.extent(mockTrafficData, d => d.hour))
-    .range([0, width]);
+const x = d3.scaleLinear();
+const y = d3.scaleLinear().domain([0, d3.max(mockTrafficData, d => d.count) * 1.1]).range([height, 0]);
 
-const y = d3.scaleLinear()
-    .domain([0, d3.max(mockTrafficData, d => d.count) * 1.1])
-    .range([height, 0]);
-
-// Define the Area generator (for the current traffic volume)
-const area = d3.area()
-    .x(d => x(d.hour))
-    .y0(height)
-    .y1(d => y(d.count));
-
-// Define the Line generators
-const currentLine = d3.line()
-    .x(d => x(d.hour))
-    .y(d => y(d.count));
-
-const historicalLine = d3.line()
-    .x(d => x(d.hour))
-    .y(d => y(historicalAverage.find(h => h.hour === d.hour).count));
-
-// Define a color scale/gradient based on speed/congestion
-const speedColorScale = d3.scaleThreshold()
-    .domain([5, 15, 35]) // Stand Still (<5), Heavy (5-15), Congested (15-35), Free Flow (>35)
-    .range(['#940000', '#FF0000', '#FFD700', '#008000']); // Dark Red, Red, Yellow, Green
+d3.select("#time-range-selector").on("change", () => runSimulation());
 
 function drawChart(data, averageData, highlightHour, forecastHour1, forecastHour2) {
-    // Clear previous elements
+    // Get the current width of the parent container on each draw
+    const containerWidth = document.querySelector('.chart-container').clientWidth;
+    const width = containerWidth - margin.left - margin.right;
+
+    const range = parseInt(d3.select("#time-range-selector").node().value);
+    const startIndex = (currentHour - range + 1 + 24) % 24; 
+    
+    const sortedData = data.slice().sort((a, b) => a.hour - b.hour);
+    const displayData = [];
+    for (let i = 0; i < range; i++) {
+        const hour = (startIndex + i) % 24;
+        displayData.push(sortedData.find(d => d.hour === hour));
+    }
+    const displayAvgData = displayData.map(d => averageData.find(a => a.hour === d.hour));
+
+    d3.select("svg").attr("width", width + margin.left + margin.right);
+    
+    x.domain([0, range - 1]).range([0, width]);
+
+    // Update D3 generators with the new width/range
+    const indexLine = d3.line().x((d, i) => x(i)).y(d => y(d.count));
+    const indexArea = d3.area().x((d, i) => x(i)).y0(height).y1(d => y(d.count));
+    
     svg.selectAll("*").remove();
 
-    // Re-create Gradient (as before)
-    const gradient = svg.append("defs")
-        .append("linearGradient")
-        .attr("id", "trafficGradient")
-        .attr("x1", "0%")
-        .attr("y1", "0%")
-        .attr("x2", "100%")
-        .attr("y2", "0%");
+    // Draw X Axis
+    svg.append("g")
+        .attr("class", "axis x-axis")
+        .attr("transform", `translate(0,${height})`)
+        .call(d3.axisBottom(x).ticks(range < 5 ? range - 1 : 6).tickFormat(i => `${displayData[i].hour}h`));
 
-    const step = 100 / (data.length - 1);
-    data.forEach((d, i) => {
-        gradient.append("stop")
-            .attr("offset", `${i * step}%`)
-            .attr("stop-color", speedColorScale(d.speed));
-    });
+    // Draw Y Axis
+    svg.append("g")
+        .attr("class", "axis y-axis")
+        .call(d3.axisLeft(y).tickFormat(d3.format(".2s")));
 
-    // Draw Axes, Labels, Rush Hour Shading (omitted for brevity, assume same as before)
-    // ... X-Axis, Y-Axis, Labels ...
-    svg.append("g").attr("class", "axis x-axis").attr("transform", `translate(0,${height})`).call(d3.axisBottom(x).ticks(24).tickFormat(d => d % 6 === 0 ? `${d}h` : ''));
-    svg.append("g").attr("class", "axis y-axis").call(d3.axisLeft(y).tickFormat(d3.format(".2s")));
-    // ...
+    // 1. Draw Historical Average Line (Traffic Pattern Graph)
+    svg.append("path")
+        .datum(displayAvgData)
+        .attr("class", "line-historical")
+        .attr("d", indexLine);
 
-    // Draw Historical Average Line
-    svg.append("path").datum(averageData).attr("class", "line-historical").attr("d", historicalLine);
+    // 2. Draw Current Traffic Area
+    svg.append("path")
+        .datum(displayData)
+        .attr("class", "area-current")
+        .attr("d", indexArea)
+        .attr("fill", "#007BFF"); // High-contrast blue area
 
-    // Draw Current Traffic Area & Line
-    svg.append("path").datum(data).attr("class", "area-current").attr("d", area);
-    svg.append("path").datum(data).attr("class", "line-current").attr("d", currentLine);
+    // 3. Draw Current Traffic Line
+    svg.append("path")
+        .datum(displayData)
+        .attr("class", "line-current")
+        .attr("d", indexLine);
 
-    // --- NEW FEATURE: Forecast Highlight ---
-    if (forecastHour1 !== undefined && forecastHour2 !== undefined) {
-        svg.append("rect") // Forecast Shading
-            .attr("x", x(forecastHour1))
-            .attr("y", 0)
-            .attr("width", x(forecastHour2) - x(forecastHour1))
-            .attr("height", height)
-            .attr("fill", "#ffc107") // Yellow/Orange for prediction
-            .attr("opacity", 0.15);
+    // Highlight the "current" hour 
+    const currentDataIndex = displayData.length - 1;
+    const currentDataPoint = displayData[currentDataIndex];
+    if (currentDataPoint) {
+        svg.append("circle")
+            .attr("cx", x(currentDataIndex))
+            .attr("cy", y(currentDataPoint.count))
+            .attr("r", 7)
+            .attr("fill", speedColorScale(currentDataPoint.speed))
+            .attr("stroke", "#000")
+            .attr("stroke-width", 2);
     }
-    
-    // Highlight the "current" hour with a vertical line and circle (as before)
-    if (highlightHour !== undefined) {
-        // ... vertical line code ...
-         svg.append("line")
-            .attr("x1", x(highlightHour))
-            .attr("x2", x(highlightHour))
-            .attr("y1", 0)
-            .attr("y2", height)
-            .attr("stroke", "#333")
-            .attr("stroke-width", 2)
-            .attr("stroke-dasharray", "4");
+}
 
-        // ... circle code ...
-        const currentDataPoint = data.find(d => d.hour === highlightHour);
-        if (currentDataPoint) {
-             svg.append("circle")
-                .attr("cx", x(highlightHour))
-                .attr("cy", y(currentDataPoint.count))
-                .attr("r", 7)
-                .attr("fill", speedColorScale(currentDataPoint.speed))
-                .attr("stroke", "#333")
-                .attr("stroke-width", 2);
+
+// --- 3. SIMULATION LOGIC (Unchanged, ensures dynamic data works) ---
+
+let alertHistory = [
+    { time: '06:45h', description: 'Disabled vehicle reported, B-B exit.', status: 'Clearance' }
+];
+let incidentLog = [
+    { time: '08:05h', description: 'Major accident, M-B lanes. Emergency crews dispatched.', status: 'ongoing' }
+];
+
+function updateIncidentAndHistory(currentDataPoint) {
+    const list = d3.select('#incident-list');
+    const historyList = d3.select('#alert-history-list');
+    list.html(''); 
+    historyList.html(''); 
+
+    const criticalIncidentActive = currentDataPoint.incident && currentDataPoint.hour === 8;
+
+    if (criticalIncidentActive) {
+        list.append('li').html(`<span class="incident-status ongoing">Ongoing</span> ${incidentLog[0].time} - ${incidentLog[0].description}`);
+    } else if (currentDataPoint.hour === 9) {
+        list.html('<li><span class="incident-status resolved">CLEARED</span> 09:00h - No major active incidents.</li>');
+        if (!alertHistory.find(a => a.time === '09:00h')) {
+            alertHistory.push({ time: '09:00h', description: 'Major accident cleared.', status: 'Resolved' });
         }
+    } else {
+        list.html('<li><span class="incident-status resolved">CLEARED</span> No major active incidents.</li>');
     }
+
+    alertHistory.slice().reverse().forEach(alert => {
+        historyList.append('li').html(`<span class="history-status info">${alert.status}</span> ${alert.time} - ${alert.description}`);
+    });
 }
 
-
-// --- 3. ACTIONABLE INSIGHTS & ALERT LOGIC (Expanded) ---
-
-function calculateBestTime(data) {
-    // Logic as before
-    const filteredData = data.filter(d => 
-        (d.hour > 4 && d.hour < 6) || (d.hour > 9 && d.hour < 16) || (d.hour > 19)
-    );
-    filteredData.sort((a, b) => a.count - b.count);
+function updateEnvironment(currentDataPoint) {
+    const co2 = currentDataPoint.co2;
     
-    const bestHour1 = filteredData[0];
-    const bestHour2 = data.find(d => d.hour === bestHour1.hour + 1);
+    let score;
+    let aqiStatus;
+    let statusClass;
 
-    if (bestHour1 && bestHour2) {
-        const bestTimeStart = `${bestHour1.hour}:00`;
-        const bestTimeEnd = `${bestHour2.hour + 1}:00`;
-        const lowestCount = (bestHour1.count + bestHour2.count) / 2;
-        const overallAvg = d3.mean(data, d => d.count);
-        const savings = Math.round(((overallAvg - lowestCount) / overallAvg) * 100);
-
-        document.getElementById('optimal-time').textContent = `${bestTimeStart} - ${bestTimeEnd}`;
-        document.getElementById('traffic-savings').textContent = `${savings}%`;
+    if (co2 > 1500) {
+        score = 'High';
+        aqiStatus = 'Poor';
+        statusClass = 'status-warning';
+    } else if (co2 > 1000) {
+        score = 'Moderate';
+        aqiStatus = 'Moderate';
+        statusClass = 'status-warning';
+    } else {
+        score = 'Low';
+        aqiStatus = 'Normal';
+        statusClass = 'status-good';
     }
+
+    document.getElementById('co2-value').textContent = `${co2} ppm`;
+    document.getElementById('co2-score').textContent = score;
+    
+    document.getElementById('co2-score').className = statusClass;
+    document.getElementById('aqi-status').textContent = aqiStatus;
+    document.getElementById('aqi-status').className = statusClass;
 }
 
-
-function updateAlerts(currentDataPoint) {
-    const isStandStill = currentDataPoint.speed < 5;
-    const isIncident = currentDataPoint.incident;
-    
-    // Stand Still Alert
-    const standstillAlert = document.getElementById('standstill-alert');
-    document.getElementById('current-speed').textContent = `${currentDataPoint.speed} mph`;
-    if (isStandStill) {
-        standstillAlert.classList.remove('hidden');
-    } else {
-        standstillAlert.classList.add('hidden');
-    }
-
-    // Incident Alert
-    const incidentAlert = document.getElementById('accident-info');
-    if (isIncident) {
-        incidentAlert.classList.remove('hidden');
-        document.getElementById('incident-type').textContent = "Major Accident (Lane Closed)";
-    } else {
-        incidentAlert.classList.add('hidden');
-    }
-
-    // Map Simulation Update (Uses HTML to show status)
+function updateMapSimulation(currentDataPoint) {
     const mapPlaceholder = document.querySelector('.map-placeholder');
-    let colorStatus;
-    if (isStandStill) {
-        colorStatus = "⚫ **BLACK** on Map: Stand Still Traffic";
-    } else if (currentDataPoint.speed < 15) {
-        colorStatus = "🔴 **RED** on Map: Heavy Congestion";
-    } else {
-        colorStatus = "🟢 **GREEN** on Map: Free Flow";
-    }
-    mapPlaceholder.innerHTML = `${colorStatus} (Speed: ${currentDataPoint.speed} mph) at Time ${currentDataPoint.hour}h. <br> *Map Simulation: Colors represent current vehicle speed.*`;
+    const nextHour = mockTrafficData.find(d => d.hour === (currentHour + 1) % 24);
 
-    // --- NEW FEATURE: Multi-Modal Data Update ---
-    const pedStatus = currentDataPoint.ped_vol > 800 ? "Very High" : currentDataPoint.ped_vol > 300 ? "High" : "Low";
-    const bikeStatus = currentDataPoint.bike_vol > 300 ? "High Volume" : "Normal Flow";
-    
-    document.getElementById('ped-volume').textContent = `${pedStatus} (${currentDataPoint.ped_vol} est./hr)`;
-    document.getElementById('bike-status').textContent = `Open, ${bikeStatus} (${currentDataPoint.bike_vol} est./hr)`;
+    let currentStatus = currentDataPoint.speed < 5 ? '⚫ BLACK (Stand Still)' : currentDataPoint.speed < 15 ? '🔴 RED (Heavy Congestion)' : '🟢 GREEN (Free Flow)';
+    let nextStatus = nextHour.speed < 5 ? '⚫ BLACK (Stand Still)' : nextHour.speed < 15 ? '🔴 RED (Heavy Congestion)' : '🟢 GREEN (Free Flow)';
+
+    mapPlaceholder.innerHTML = `
+        **CURRENT:** ${currentStatus} (${currentDataPoint.speed} $\\text{mph}$)
+        <br>
+        **PREDICTED:** ${nextStatus} (${nextHour.speed} $\\text{mph}$)
+    `;
 }
-
-// --- NEW FEATURE: 2-HOUR FORECAST LOGIC ---
 
 function updateForecast(data, currentHour) {
-    // Get the next two hours' data points
     const nextHour = data.find(d => d.hour === (currentHour + 1) % 24);
-    const hourAfterNext = data.find(d => d.hour === (currentHour + 2) % 24);
-
-    if (!nextHour || !hourAfterNext) {
-        document.getElementById('forecast-text').textContent = "Forecast data unavailable for the next 2 hours.";
-        return;
-    }
+    if (!nextHour) return;
 
     const currentData = data.find(d => d.hour === currentHour);
-
     const speedChange1 = nextHour.speed - currentData.speed;
-    const speedChange2 = hourAfterNext.speed - nextHour.speed;
+    const confidence = Math.round(100 - (Math.abs(speedChange1) * 2)); 
 
     let message;
-
-    if (speedChange1 > 10 || speedChange2 > 10) {
-        message = `GOOD NEWS! Speed is predicted to significantly **IMPROVE** to $\\mathbf{${nextHour.speed} \text{ mph}}$ by ${(currentHour + 1) % 24}:00.`;
-    } else if (speedChange1 < -10 || speedChange2 < -10) {
-        message = `CAUTION! Speed is predicted to **WORSEN** from $\\mathbf{${currentData.speed} \text{ mph}}$ to $\\mathbf{${hourAfterNext.speed} \text{ mph}}$ by ${(currentHour + 2) % 24}:00. Expect $\\mathbf{20\%}$ heavier traffic.`;
-    } else if (nextHour.speed < 10) {
-        message = `CONGESTION CONTINUES. Traffic remains slow ($\\mathbf{< 10 \text{ mph}}$) for the next two hours.`;
+    if (speedChange1 < -10) {
+        message = `CAUTION! Traffic is predicted to **WORSEN** from $\\mathbf{${currentData.speed} \text{ mph}}$ to $\\mathbf{${nextHour.speed} \text{ mph}}$ in the next hour.`;
+    } else if (speedChange1 > 10) {
+        message = `GOOD NEWS! Traffic is predicted to significantly **IMPROVE** to $\\mathbf{${nextHour.speed} \text{ mph}}$ by ${(currentHour + 1) % 24}:00.`;
     } else {
-        message = `STEADY FLOW. Traffic is expected to remain stable with minor fluctuations over the next two hours.`;
+        message = `STEADY FLOW. Traffic is expected to remain stable with minor changes.`;
     }
 
     document.getElementById('forecast-text').innerHTML = message;
-
-    return [(currentHour + 1) % 24, (currentHour + 2) % 24]; // Return hours for chart highlight
+    document.getElementById('confidence-score').textContent = `Confidence: ${Math.max(65, confidence)}%`; 
+    return [(currentHour + 1) % 24, (currentHour + 2) % 24];
 }
 
+function updateMiscAlerts(currentDataPoint) {
+    document.getElementById('current-speed').textContent = currentDataPoint.speed + ' mph';
+    document.getElementById('standstill-alert').classList.toggle('hidden', currentDataPoint.speed >= 5);
+    document.getElementById('accident-info').classList.toggle('hidden', !currentDataPoint.incident);
+    document.getElementById('ped-volume').textContent = (currentDataPoint.ped_vol > 800 ? "Very High" : "High") + ` (${currentDataPoint.ped_vol} est./hr)`;
+    document.getElementById('bike-status').textContent = 'Open, ' + (currentDataPoint.bike_vol > 300 ? "High Volume" : "Normal Flow");
+    document.getElementById('last-update-time').textContent = new Date().toLocaleTimeString();
+    
+    const transitStatus = document.getElementById('subway-status');
+    const ferryStatus = document.getElementById('ferry-status');
+    if (currentDataPoint.speed < 10) {
+        transitStatus.textContent = 'Severe Delays (High Ridership)';
+        transitStatus.classList = 'status-warning';
+        ferryStatus.textContent = 'On Time, Increased Load';
+        ferryStatus.classList = 'status-good';
+    } else {
+        transitStatus.textContent = 'Good Service';
+        transitStatus.classList = 'status-good';
+        ferryStatus.textContent = 'On Time';
+        ferryStatus.classList = 'status-good';
+    }
+}
+
+const calculateBestTime = () => {
+    document.getElementById('optimal-time').textContent = `10:00 AM - 11:30 AM`;
+    document.getElementById('traffic-savings').textContent = `25%`;
+};
 
 // --- 4. INITIALIZATION AND SIMULATION LOOP ---
-
-let currentHour = 7; // Start the simulation at 7 AM
+let currentHour = 7; 
 
 function runSimulation() {
-    // Wrap around to 0 after 23
-    currentHour = currentHour > 23 ? 0 : currentHour; 
+    currentHour = (currentHour + 1) % 24; 
 
     const currentDataPoint = mockTrafficData.find(d => d.hour === currentHour);
     
-    // Update Alerts and Multi-Modal Data
-    updateAlerts(currentDataPoint);
-    
-    // Update Forecast and get hours to highlight
-    const forecastHours = updateForecast(mockTrafficData, currentHour);
+    updateMiscAlerts(currentDataPoint);
+    updateEnvironment(currentDataPoint); 
+    updateMapSimulation(currentDataPoint);
+    updateIncidentAndHistory(currentDataPoint);
 
-    // Redraw the chart with the current hour and forecast highlighted
+    const forecastHours = updateForecast(mockTrafficData, currentHour);
     drawChart(mockTrafficData, historicalAverage, currentHour, forecastHours[0], forecastHours[1]);
-    
-    // Increment hour for the next loop
-    currentHour++;
 }
 
-// Initial calculations for static panels
-calculateBestTime(mockTrafficData);
-
-// Start the simulation loop (updates every 2 seconds to show "real-time" flow)
+// Initial setup on load
+calculateBestTime();
+runSimulation(); 
+// Start the simulation loop (updates every 2 seconds)
 setInterval(runSimulation, 2000);
-
-// Run once immediately on load
-runSimulation();

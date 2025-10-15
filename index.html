@@ -17,7 +17,7 @@
   
   <header>
     <h1>🌉 Brooklyn Bridge Multi-Modal Control Center 📊</h1>
-    <p>Predictive traffic, transit, and environmental data for New York City transportation management.</p>
+    <p class="subtitle">Predictive traffic, transit, and environmental data for high-stakes urban management.</p>
   </header>
 
   <hr>
@@ -28,18 +28,23 @@
       <h2>2-Hour Traffic Forecast</h2>
       <div id="forecast-output" class="forecast-box">
         <p id="forecast-text">Loading forecast...</p>
+        <span id="confidence-score" class="confidence-badge">Confidence: 95%</span>
       </div>
     </div>
     
     <div class="data-card environment-panel">
       <h2>Environment & $\text{CO}_2$ Impact</h2>
       <p><strong>Air Quality Index (AQI):</strong> <span id="aqi-status" class="status-good">Normal</span></p>
-      <p><strong>Predicted $\text{CO}_2$ Score:</strong> <span id="co2-score">Low</span> <span id="co2-value" class="status-metric">780 $\text{ppm}$</span></p>
+      <p>
+        <strong>Predicted $\text{CO}_2$ Score:</strong> 
+        <span id="co2-score">Low</span> 
+        <span id="co2-value" class="status-metric">780 $\text{ppm}$</span>
+      </p>
     </div>
     
     <div class="data-card transit-panel">
       <h2>NYC Transit Status</h2>
-      <p><strong>4/5/6 Subway Line (Brooklyn Bridge - City Hall):</strong> <span id="subway-status" class="status-good">Good Service</span></p>
+      <p><strong>4/5/6 Subway Line:</strong> <span id="subway-status" class="status-good">Good Service</span></p>
       <p><strong>Ferry Status (Pier 11):</strong> <span id="ferry-status" class="status-warning">Minor Delays</span></p>
     </div>
   </section>
@@ -47,7 +52,7 @@
   <hr>
 
   <section class="insights-panel">
-    <h2>Actionable Insights & Alerts</h2>
+    <h2>Current Critical Alerts</h2>
     
     <div class="alerts-grid">
       <div id="standstill-alert" class="alert-box danger hidden">
@@ -69,9 +74,16 @@
   <section class="visualization-area">
     
     <div class="chart-container">
-      <h2>24-Hour Vehicle Volume & Pattern</h2>
+      <h2>Vehicle Volume & Pattern</h2>
       <div class="chart-controls">
-        <label for="pattern-selector">View Pattern:</label>
+        <label for="time-range-selector">Range:</label>
+        <select id="time-range-selector">
+          <option value="24">24 Hours</option>
+          <option value="12">12 Hours</option>
+          <option value="6">6 Hours</option>
+          <option value="1">1 Hour</option>
+        </select>
+        <label for="pattern-selector">Pattern:</label>
         <select id="pattern-selector">
           <option value="today">Today (Simulated)</option>
           <option value="weekday-avg">Weekday Average</option>
@@ -84,18 +96,24 @@
     <div class="map-and-incident-container">
         <div class="map-container">
             <h2>Live & Predictive Congestion Map</h2>
-            <p class="map-subtitle">Current Map Status (Left) vs. **Next Hour Predicted** (Right)</p>
+            <p class="map-subtitle">Current Status (Left) vs. **Next Hour Predicted** (Right)</p>
             <div id="traffic-map">
                 <p class="map-placeholder">
                     
-                    <br>
                     *Map Simulation: Current Speed (Left) vs. Predicted Speed (Right)*
                 </p>
             </div>
             
+            <div class="speed-legend">
+                <span style="background-color:#00C853;"></span> Free Flow $>35 \text{mph}$
+                <span style="background-color:#FFD600;"></span> Congested $15-35 \text{mph}$
+                <span style="background-color:#FF3D00;"></span> Heavy $5-15 \text{mph}$
+                <span style="background-color:#D50000;"></span> Stand Still $<5 \text{mph}$
+            </div>
+
             <div class="multi-modal-data">
                 <h3>🚶🚴 Multi-Modal Status</h3>
-                <p><strong>Pedestrian Volume:</strong> <span id="ped-volume">High</span> (Tourist Zone)</p>
+                <p><strong>Pedestrian Volume:</strong> <span id="ped-volume">High</span></p>
                 <p><strong>Bike Path Status:</strong> <span id="bike-status">Open, High Volume</span></p>
             </div>
         </div>
@@ -104,7 +122,10 @@
             <h2>Active Incidents Log</h2>
             <ul id="incident-list">
                 <li><span class="incident-status ongoing">Ongoing</span> 08:05h - Major accident, M-B lanes.</li>
-                <li><span class="incident-status resolved">Resolved</span> 06:45h - Disabled vehicle, B-B exit.</li>
+            </ul>
+            <h3>Alert History</h3>
+             <ul id="alert-history-list">
+                <li><span class="history-status info">Clearance</span> 06:45h - Disabled vehicle removed.</li>
             </ul>
         </div>
     </div>
@@ -114,15 +135,13 @@
 
   <section class="control-panel">
     <h2>🚦 Control Manager Simulation</h2>
-    <p>Use these controls to simulate active traffic management responses.</p>
     <div class="controls-grid">
       <div>
         <label for="lane-control">Bridge Lane Direction:</label>
         <select id="lane-control" onchange="console.log('Lane direction set to: ' + this.value)">
           <option>3 Manhattan / 1 Brooklyn (Standard AM)</option>
-          <option>2 Manhattan / 2 Brooklyn (Standard Day)</option>
           <option>1 Manhattan / 3 Brooklyn (Standard PM)</option>
-          <option disabled>Activate Contra-flow Lane</option>
+          <option>2 Manhattan / 2 Brooklyn (Standard Day)</option>
         </select>
       </div>
       <div>
@@ -135,11 +154,10 @@
   </section>
 
   <footer>
-    <p>Powered by Simulated Data and D3.js. For Internal Use.</p>
+    <p>System Status: Online | Last Update: <span id="last-update-time"></span> | Data Source: Simulated/Internal</p>
   </footer>
   
 </div>
-
 
     <!-- END main -->
 
