@@ -13,10 +13,72 @@
 
     <!-- Main Section -->
     
-<div class="container">
-    <h1>Brooklyn Bridge Traffic Flow Control App</h1>
-    <p>Simulated hourly vehicle count over 24 hrs.</p>
-    <div id="traffic-chart"></div>
+<div class="traffic-dashboard">
+  
+  <header>
+    <h1>🌉 Brooklyn Bridge Traffic Control Dashboard 🚦</h1>
+    <p>Real-time (simulated) congestion, patterns, and safety alerts for transportation management.</p>
+  </header>
+
+  <hr>
+
+  <section class="insights-panel">
+    <h2>Actionable Insights & Alerts</h2>
+    
+    <div id="standstill-alert" class="alert-box danger hidden">
+      ⚠️ **STAND STILL TRAFFIC ALERT!** Speed is <span id="current-speed">3 mph</span> on the Manhattan-bound lanes. Expect significant delays.
+    </div>
+
+    <div id="best-time-to-drive" class="alert-box success">
+      <p>✅ **Best Time to Drive (Next 4 Hours):** <span id="optimal-time">10:00 AM - 11:30 AM</span>. Traffic is predicted to be <span id="traffic-savings">25%</span> lighter than average.</p>
+    </div>
+
+    <div id="accident-info" class="alert-box warning hidden">
+      🚨 **INCIDENT ALERT:** <span id="incident-type">1-Car Accident</span> reported near the mid-span. Expect lane closures.
+    </div>
+
+    <div class="pattern-summary">
+      <h3>Traffic Patterns Summary</h3>
+      <p id="pattern-text">The highest congestion typically occurs Tuesday-Thursday during the PM Rush (4:30 PM - 6:30 PM).</p>
+    </div>
+  </section>
+
+  <hr>
+
+  <section class="visualization-area">
+    
+    <div class="map-container">
+      <h2>Live Congestion Map</h2>
+      <div id="traffic-map">
+        <p class="map-placeholder">
+          
+          <br>
+          *Map Simulation: Colors represent speed (Black/Dark Red = Stand Still Traffic)*
+        </p>
+      </div>
+    </div>
+    
+    <div class="chart-container">
+      <h2>24-Hour Traffic Volume & Pattern</h2>
+      <div class="chart-controls">
+        <label for="pattern-selector">View Pattern:</label>
+        <select id="pattern-selector">
+          <option value="today">Today (Simulated)</option>
+          <option value="weekday-avg">Weekday Average</option>
+          <option value="weekend-avg">Weekend Average</option>
+        </select>
+      </div>
+      <div id="traffic-chart"></div>
+    </div>
+
+  </section>
+  
+  <hr>
+
+  <footer>
+    <p>Data Source: Simulated/Historical NYC Transportation Data. Visualization by D3.js.</p>
+  </footer>
+  
 </div>
 
     <!-- END main -->

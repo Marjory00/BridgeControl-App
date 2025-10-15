@@ -1,0 +1,193 @@
+/* --- Global Reset & Base Styles --- */
+body {
+  font-family: 'Helvetica Neue', Arial, sans-serif;
+  background-color: #f4f7f9; /* Light, neutral background */
+  margin: 0;
+  padding: 20px;
+  color: #333;
+}
+
+.traffic-dashboard {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 30px;
+  background-color: #ffffff;
+  border-radius: 10px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+header {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+header h1 {
+  color: #007bff; /* Primary blue for a transportation theme */
+  font-size: 2em;
+  margin-bottom: 5px;
+}
+
+hr {
+  border: 0;
+  height: 1px;
+  background-color: #ddd;
+  margin: 20px 0;
+}
+
+/* --- 1. Actionable Insights and Alerts (Alert Boxes) --- */
+.insights-panel {
+  margin-bottom: 30px;
+}
+
+.insights-panel h2 {
+  color: #555;
+  border-bottom: 2px solid #f0f0f0;
+  padding-bottom: 10px;
+  margin-bottom: 20px;
+}
+
+.alert-box {
+  padding: 15px;
+  margin-bottom: 15px;
+  border-radius: 6px;
+  font-weight: bold;
+  font-size: 1.1em;
+  display: flex; /* Use flex to align icon/text */
+  align-items: center;
+}
+
+.alert-box.hidden {
+  display: none !important; /* Force hide the alert if not active */
+}
+
+.alert-box.danger {
+  background-color: #f8d7da; /* Light Red */
+  color: #721c24; /* Dark Red */
+  border: 1px solid #f5c6cb;
+}
+
+.alert-box.warning {
+  background-color: #fff3cd; /* Light Yellow */
+  color: #856404; /* Dark Yellow */
+  border: 1px solid #ffeeba;
+}
+
+.alert-box.success {
+  background-color: #d4edda; /* Light Green */
+  color: #155724; /* Dark Green */
+  border: 1px solid #c3e6cb;
+}
+
+#current-speed, #optimal-time, #traffic-savings {
+  font-weight: 900;
+  text-decoration: underline;
+}
+
+.pattern-summary {
+  background-color: #f7f9fa;
+  padding: 15px;
+  border-left: 5px solid #007bff;
+  border-radius: 4px;
+}
+.pattern-summary h3 {
+    margin-top: 0;
+    color: #007bff;
+    font-size: 1.2em;
+}
+
+/* --- 2. Visualization Area (Map and Chart) --- */
+.visualization-area {
+  display: flex;
+  gap: 20px; /* Space between map and chart containers */
+}
+
+.map-container, .chart-container {
+  flex: 1; /* Both take equal width */
+  background-color: #fcfcfc;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+}
+
+.visualization-area h2 {
+  text-align: center;
+  color: #333;
+  margin-bottom: 15px;
+}
+
+/* Map specific styles */
+#traffic-map {
+  height: 350px; /* Set a fixed height for the map/placeholder */
+  background-color: #e6e6e6; /* Placeholder color */
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.map-placeholder {
+    font-style: italic;
+    color: #666;
+    text-align: center;
+    line-height: 1.5;
+}
+
+/* Chart specific styles */
+.chart-controls {
+  text-align: right;
+  margin-bottom: 10px;
+  font-size: 0.9em;
+}
+
+.chart-controls label {
+  font-weight: bold;
+  margin-right: 5px;
+}
+
+#traffic-chart {
+  /* The D3.js chart will be rendered inside here */
+  height: 350px;
+  width: 100%;
+}
+
+/* D3.js element styling (important for chart clarity) */
+.axis path,
+.axis line {
+  fill: none;
+  stroke: #aaa;
+  shape-rendering: crispEdges; /* Ensures sharp lines for axes */
+}
+
+.line-historical {
+    fill: none;
+    stroke: #777;
+    stroke-width: 2px;
+    stroke-dasharray: 5 5; /* Dashed line for historical average */
+}
+
+.line-current {
+    fill: none;
+    stroke: #007bff; /* Primary line color */
+    stroke-width: 3px;
+}
+
+.area-current {
+    fill: url(#trafficGradient); /* Will be defined in JS/SVG to show congestion */
+    opacity: 0.7;
+}
+
+.label {
+    font-size: 12px;
+    fill: #555;
+}
+
+/* --- Footer --- */
+footer {
+  text-align: center;
+  margin-top: 30px;
+  padding-top: 15px;
+  border-top: 1px solid #ddd;
+  font-size: 0.85em;
+  color: #777;
+}
