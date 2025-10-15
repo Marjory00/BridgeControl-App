@@ -72,8 +72,15 @@ The concept of a unified, predictive, and multi-modal traffic control dashboard 
 
 The project is structured with a clear separation of concerns, utilizing the main folder `WorkPay` as the root for Git version control.
 
-/WorkPay ├── BridgeControl-App/ │ ├── index.html // Main application structure │ ├── style.css // All application styling, including responsiveness │ └── script.js // All JavaScript logic, D3.js functions, and data simulation ├── .gitignore ├── README.md └── LICENSE
-
+```
+ /BridgeControl-App
+├── index.html         // Main application structure
+├── style.css          // All application styling, including responsiveness
+├── script.js          // All JavaScript logic, D3.js functions, and data simulation
+├── .gitignore         // Specifies intentionally untracked files to ignore
+├── README.md          // Project documentation (this file)
+└── LICENSE            // Licensing information
+```
 ---
 
 ## 🚀 Getting Started
