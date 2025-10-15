@@ -47,15 +47,15 @@ This project leverages modern frontend technologies to create a high-performance
 
 ### Scalability Assessment
 
-**Yes, the project is designed to be highly scalable.**
+**The project is designed to be highly scalable.**
 
 1.  **Data Source:** The current version uses static mock data (`mockTrafficData` in `script.js`). In a production environment, this data structure is easily replaced by calls to a **RESTful API endpoint** (`fetch(API_URL)`).
 2.  **Visualization:** D3.js is exceptionally efficient for redrawing charts and SVG maps with large datasets, ensuring performance scales with the volume of traffic data.
 3.  **Architecture:** The core logic is entirely client-side (frontend), separating presentation logic from backend data processing. This is ideal for dashboards where the backend focuses solely on providing optimized, aggregated data streams.
 
-### Is the project a good idea?
+### Project Design and Planning Research
 
-**Yes.** The concept of a unified, predictive, and multi-modal traffic control dashboard is a leading trend in smart city development. It addresses real-world problems by improving public safety, reducing commuter stress, and providing better data to public officials for making informed, multi-million dollar infrastructure and resource allocation decisions. It serves as a strong technical demonstration of integrating **data visualization, responsiveness, and complex application state management** in a frontend context.
+The concept of a unified, predictive, and multi-modal traffic control dashboard is a leading trend in smart city development. It addresses real-world problems by improving public safety, reducing commuter stress, and providing better data to public officials for making informed, multi-million dollar infrastructure and resource allocation decisions. It serves as a strong technical demonstration of integrating **data visualization, responsiveness, and complex application state management** in a frontend context.
 
 ---
 
