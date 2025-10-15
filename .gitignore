@@ -1,0 +1,17 @@
+# Dependencies
+/node_modules
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+
+# Operating System Files
+.DS_Store
+Thumbs.db
+
+# Build/Dist files
+/dist
+/build
+
+# IDE/Editor files (VS Code)
+.vscode
