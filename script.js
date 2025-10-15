@@ -26,7 +26,8 @@ const mockTrafficData = [
     { hour: 22, count: 1800, speed: 40, incident: false, ped_vol: 100, bike_vol: 100, co2: 750 },
     { hour: 23, count: 900, speed: 45, incident: false, ped_vol: 70, bike_vol: 50, co2: 700 }
 ];
-const historicalAverage = mockTrafficData.map(d => ({ hour: d.hour, count: d.count * 0.95 }));
+
+// D3 scale for color mapping based on speed (used for chart dots)
 const speedColorScale = d3.scaleThreshold().domain([5, 15, 35]).range(['#D50000', '#FF3D00', '#FFD600', '#00C853']); 
 const timeFormatter = (h) => {
     if (h === 0) return '12 AM';
@@ -35,154 +36,134 @@ const timeFormatter = (h) => {
     return `${h - 12} PM`;
 };
 
+// Helper function to map speed to CSS color class for the animated map
+function getTrafficColorClass(speed) {
+    if (speed < 5) return 'status-black'; 
+    if (speed < 15) return 'status-red';  
+    if (speed < 35) return 'status-yellow'; 
+    return 'status-green'; 
+}
+
 // --- 2. D3.JS CHART SETUP ---
 const margin = { top: 20, right: 30, bottom: 50, left: 60 };
 const height = 350 - margin.top - margin.bottom;
-
-const svg = d3.select("#traffic-chart")
-    .append("svg")
-    .attr("height", height + margin.top + margin.bottom)
-    .append("g")
-    .attr("transform", `translate(${margin.left},${margin.top})`);
-
+let svg;
+let g;
 const tooltip = d3.select("#tooltip");
-
 const x = d3.scaleLinear();
 const y = d3.scaleLinear().domain([0, d3.max(mockTrafficData, d => d.count) * 1.1]).range([height, 0]);
+const historicalAverage = mockTrafficData.map(d => ({ hour: d.hour, count: d.count * 0.95 }));
 
-d3.select("#time-range-selector").on("change", () => runSimulation());
+function initializeSVG() {
+    const chartContainer = d3.select("#traffic-chart");
 
-function drawChart(data, averageData, highlightHour, forecastHour1, forecastHour2) {
+    // Calculate current width of the container
+    const containerWidth = document.querySelector('.chart-container').clientWidth - 40; // Account for 20px padding on each side
+    const width = containerWidth - margin.left - margin.right;
+    
+    // Select or append the SVG element
+    if (chartContainer.select('svg').empty()) {
+        svg = chartContainer
+            .append("svg")
+            .attr("width", width + margin.left + margin.right)
+            .attr("height", height + margin.top + margin.bottom);
+
+        g = svg.append("g")
+            .attr("transform", `translate(${margin.left},${margin.top})`);
+    } else {
+        svg = chartContainer.select('svg');
+        g = chartContainer.select('g');
+        // Update SVG and group dimensions on redraw/resize
+        svg.attr("width", width + margin.left + margin.right);
+    }
+}
+
+function drawChart(data, averageData, highlightHour) {
     const container = document.querySelector('.chart-container');
     if (!container) return; 
 
-    const containerWidth = container.clientWidth;
+    // Re-initialize/update SVG for responsiveness
+    initializeSVG(); 
+    
+    const containerWidth = container.clientWidth - 40;
     const width = containerWidth - margin.left - margin.right;
-
     const range = parseInt(d3.select("#time-range-selector").node().value);
     
-    // Sort and slice data to only display the selected range, keeping it live-updating
     const sortedData = data.slice().sort((a, b) => a.hour - b.hour);
     const displayData = [];
+
+    // Dynamically calculate the start hour based on currentHour and range
+    let startHour = (highlightHour - range + 1 + 24) % 24;
+    
     for (let i = 0; i < range; i++) {
-        const hour = (currentHour - range + 1 + i + 24) % 24;
-        displayData.push(sortedData.find(d => d.hour === hour));
+        const hour = (startHour + i) % 24;
+        const dataPoint = sortedData.find(d => d.hour === hour);
+        if (dataPoint) displayData.push(dataPoint); 
     }
     const displayAvgData = displayData.map(d => averageData.find(a => a.hour === d.hour));
 
-    d3.select("#traffic-chart svg").attr("width", width + margin.left + margin.right);
-    
-    x.domain([0, range - 1]).range([0, width]);
+    // Update X scale domain based on number of points displayed
+    x.domain([0, displayData.length - 1]).range([0, width]);
 
+    // Define line and area generators
     const indexLine = d3.line().x((d, i) => x(i)).y(d => y(d.count));
     const indexArea = d3.area().x((d, i) => x(i)).y0(height).y1(d => y(d.count));
     
-    svg.selectAll("*").remove();
+    g.selectAll("*").remove(); // Clear previous elements for redraw
 
-    // Draw X Axis
-    svg.append("g")
+    // Draw Axes
+    g.append("g")
         .attr("class", "axis x-axis")
         .attr("transform", `translate(0,${height})`)
         .call(d3.axisBottom(x)
-            .ticks(range < 5 ? range - 1 : 6)
-            .tickFormat(i => timeFormatter(displayData[i].hour)));
+            .ticks(Math.min(displayData.length, 6)) // Limit ticks on smaller ranges
+            .tickFormat(i => {
+                if (displayData[i]) return timeFormatter(displayData[i].hour);
+                return '';
+            }));
 
-    // X Axis Label
-    svg.append("text")
-        .attr("class", "x label")
-        .attr("text-anchor", "end")
-        .attr("x", width / 2)
-        .attr("y", height + 35)
-        .text("Hour of Day");
-
-    // Draw Y Axis
-    svg.append("g")
-        .attr("class", "axis y-axis")
-        .call(d3.axisLeft(y).tickFormat(d3.format(".2s")));
-
-    // Y Axis Label
-    svg.append("text")
-        .attr("class", "y label")
-        .attr("text-anchor", "end")
-        .attr("y", -margin.left + 15)
-        .attr("x", -height / 2)
-        .attr("dy", ".75em")
-        .attr("transform", "rotate(-90)")
-        .text("Vehicle Volume (Veh/Hr)");
+    g.append("text").attr("class", "x label").attr("text-anchor", "end").attr("x", width / 2).attr("y", height + 35).text("Hour of Day");
+    g.append("g").attr("class", "axis y-axis").call(d3.axisLeft(y).tickFormat(d3.format(".2s")));
+    g.append("text").attr("class", "y label").attr("text-anchor", "end").attr("y", -margin.left + 15).attr("x", -height / 2).attr("dy", ".75em").attr("transform", "rotate(-90)").text("Vehicle Volume (Veh/Hr)");
 
 
-    // 1. Draw Historical Average Line (Traffic Pattern Graph)
-    svg.append("path")
-        .datum(displayAvgData)
-        .attr("class", "line-historical")
-        .attr("d", indexLine);
+    // 1. Draw Historical Average Line
+    g.append("path").datum(displayAvgData).attr("class", "line-historical").attr("d", indexLine);
 
     // 2. Draw Current Traffic Area
-    svg.append("path")
-        .datum(displayData)
-        .attr("class", "area-current")
-        .attr("d", indexArea)
-        .attr("fill", "#007BFF"); 
+    g.append("path").datum(displayData).attr("class", "area-current").attr("d", indexArea);
 
     // 3. Draw Current Traffic Line
-    svg.append("path")
-        .datum(displayData)
-        .attr("class", "line-current")
-        .attr("d", indexLine);
+    g.append("path").datum(displayData).attr("class", "line-current").attr("d", indexLine);
         
-    // 4. Incident Marker (Vertical Red Line)
+    // 4. Incident Marker 
     const incidentIndex = displayData.findIndex(d => d.hour === 8);
     if (incidentIndex !== -1) {
-        svg.append("line")
-            .attr("x1", x(incidentIndex))
-            .attr("x2", x(incidentIndex))
-            .attr("y1", 0)
-            .attr("y2", height)
-            .attr("stroke", "#DC3545")
-            .attr("stroke-width", 2)
-            .attr("stroke-dasharray", "4 4")
-            .attr("opacity", 0.7);
+        g.append("line")
+            .attr("x1", x(incidentIndex)).attr("x2", x(incidentIndex))
+            .attr("y1", 0).attr("y2", height)
+            .attr("stroke", "#CC0000").attr("stroke-width", 2).attr("stroke-dasharray", "4 4").attr("opacity", 0.9);
     }
 
-
-    // 5. Data Points (Circles with speed color)
-    svg.selectAll(".dot")
-        .data(displayData)
-        .enter().append("circle")
-        .attr("class", "dot")
-        .attr("cx", (d, i) => x(i))
-        .attr("cy", d => y(d.count))
-        .attr("r", 5)
+    // 5. Data Points 
+    g.selectAll(".dot").data(displayData).enter().append("circle")
+        .attr("class", "dot").attr("cx", (d, i) => x(i)).attr("cy", d => y(d.count)).attr("r", 5)
         .attr("fill", d => speedColorScale(d.speed))
         .on("mouseover", function(event, d) {
-            tooltip.transition()
-                .duration(200)
-                .style("opacity", .9);
-            tooltip.html(`
-                Time: ${timeFormatter(d.hour)}<br>
-                Volume: ${d.count.toLocaleString()}
-                <br>Speed: ${d.speed} mph
-            `)
-            .style("left", (event.pageX + 10) + "px")
-            .style("top", (event.pageY - 28) + "px");
-        })
-        .on("mouseout", function(d) {
-            tooltip.transition()
-                .duration(500)
-                .style("opacity", 0);
+            tooltip.transition().duration(200).style("opacity", .9);
+            tooltip.html(`Time: ${timeFormatter(d.hour)}<br>Volume: ${d.count.toLocaleString()}<br>Speed: ${d.speed} mph`)
+            .style("left", (event.pageX + 10) + "px").style("top", (event.pageY - 28) + "px");
+        }).on("mouseout", function(d) {
+            tooltip.transition().duration(500).style("opacity", 0);
         });
 
     // Highlight the "current" hour 
-    const currentDataIndex = displayData.length - 1;
+    const currentDataIndex = displayData.findIndex(d => d.hour === highlightHour);
     const currentDataPoint = displayData[currentDataIndex];
     if (currentDataPoint) {
-        svg.append("circle")
-            .attr("cx", x(currentDataIndex))
-            .attr("cy", y(currentDataPoint.count))
-            .attr("r", 7)
-            .attr("fill", speedColorScale(currentDataPoint.speed))
-            .attr("stroke", "#343A40")
-            .attr("stroke-width", 2);
+        g.append("circle")
+            .attr("cx", x(currentDataIndex)).attr("cy", y(currentDataPoint.count)).attr("r", 7)
+            .attr("fill", speedColorScale(currentDataPoint.speed)).attr("stroke", "#343A40").attr("stroke-width", 2);
     }
 }
 
@@ -199,16 +180,15 @@ let incidentLog = [
 function updateIncidentAndHistory(currentDataPoint) {
     const list = d3.select('#incident-list');
     const historyList = d3.select('#alert-history-list');
+    if (list.empty() || historyList.empty()) return;
+
     list.html(''); 
     historyList.html(''); 
-
-    // The incident is hardcoded for hour 8 
     const criticalIncidentActive = currentDataPoint.incident && currentDataPoint.hour === 8;
 
     if (criticalIncidentActive) {
         list.append('li').html(`<span class="incident-status ongoing">Ongoing</span> ${incidentLog[0].time} - ${incidentLog[0].description}`);
     } else if (currentHour === 9) {
-        // Assume incident cleared at 9 AM
         list.html('<li><span class="incident-status resolved">CLEARED</span> 09:00h - No major active incidents.</li>');
         if (!alertHistory.find(a => a.time === '09:00h')) {
             alertHistory.push({ time: '09:00h', description: 'Major accident cleared.', status: 'Resolved' });
@@ -243,101 +223,230 @@ function updateEnvironment(currentDataPoint) {
         statusClass = 'status-good';
     }
 
-    document.getElementById('co2-value').textContent = `${co2} ppm`; 
-    document.getElementById('co2-score').textContent = score;
+    const co2Value = document.getElementById('co2-value');
+    const co2Score = document.getElementById('co2-score');
+    const aqiStatusEl = document.getElementById('aqi-status');
     
-    document.getElementById('co2-score').className = statusClass;
-    document.getElementById('aqi-status').textContent = aqiStatus;
-    document.getElementById('aqi-status').className = statusClass;
+    if (co2Value) co2Value.textContent = `${co2} ppm`; 
+    if (co2Score) {
+        co2Score.textContent = score;
+        co2Score.className = statusClass;
+    }
+    if (aqiStatusEl) {
+        aqiStatusEl.textContent = aqiStatus;
+        aqiStatusEl.className = statusClass;
+    }
 }
 
+// Map simulation logic to use dark fill and animated stroke
 function updateMapSimulation(currentDataPoint) {
-    const mapPlaceholder = document.querySelector('.map-placeholder');
+    const mapCurrentDiv = d3.select('#map-current');
+    const mapPredictedDiv = d3.select('#map-predicted');
+
+    if (mapCurrentDiv.empty() || mapPredictedDiv.empty()) return;
+
     const nextHour = mockTrafficData.find(d => d.hour === (currentHour + 1) % 24);
 
-    let currentStatus = currentDataPoint.speed < 5 ? '⚫ BLACK (Stand Still)' : currentDataPoint.speed < 15 ? '🔴 RED (Heavy Congestion)' : '🟢 GREEN (Free Flow)';
-    let nextStatus = nextHour ? (nextHour.speed < 5 ? '⚫ BLACK (Stand Still)' : nextHour.speed < 15 ? '🔴 RED (Heavy Congestion)' : '🟢 GREEN (Free Flow)') : 'Data N/A';
+    const mapWidth = mapCurrentDiv.node().clientWidth;
+    const mapHeight = mapCurrentDiv.node().clientHeight;
+    const numSegments = 4; // Simulating 4 lanes
+    const segmentWidth = mapWidth;
+    const segmentHeight = mapHeight / numSegments;
 
-    mapPlaceholder.innerHTML = `
-        **CURRENT:** ${currentStatus} (${currentDataPoint.speed} mph)
-        <br>
-        **PREDICTED (Next Hour):** ${nextStatus} (${nextHour ? nextHour.speed : 'N/A'} mph)
-    `;
+    // --- Current Map (Left) ---
+    mapCurrentDiv.selectAll('svg').remove(); // Clear previous SVG
+    const svgCurrent = mapCurrentDiv.append('svg')
+        .attr('width', mapWidth)
+        .attr('height', mapHeight);
+
+    const currentSpeed = currentDataPoint.speed;
+    const currentColorClass = getTrafficColorClass(currentSpeed);
+    const isStandstill = currentColorClass === 'status-black';
+
+    // Draw the 4 animated road segments
+    svgCurrent.selectAll('.traffic-road-segment')
+        .data(d3.range(numSegments)) 
+        .enter().append('rect')
+        // Only apply 'animated' class if it's not a complete standstill
+        .attr('class', `traffic-road-segment ${currentColorClass} ${isStandstill ? '' : 'animated'}`) 
+        .attr('x', 0)
+        .attr('y', (d, i) => i * segmentHeight)
+        .attr('width', segmentWidth)
+        .attr('height', segmentHeight);
+
+
+    // --- Predicted Map (Right) ---
+    mapPredictedDiv.selectAll('svg').remove(); // Clear previous SVG
+    const svgPredicted = mapPredictedDiv.append('svg')
+        .attr('width', mapWidth)
+        .attr('height', mapHeight);
+
+    let predictedSpeed = nextHour ? nextHour.speed : currentDataPoint.speed; 
+    let predictedColorClass = getTrafficColorClass(predictedSpeed);
+    const isPredictedStandstill = predictedColorClass === 'status-black';
+
+    // Draw the 4 animated road segments
+    svgPredicted.selectAll('.traffic-road-segment')
+        .data(d3.range(numSegments)) 
+        .enter().append('rect')
+        .attr('class', `traffic-road-segment ${predictedColorClass} ${isPredictedStandstill ? '' : 'animated'}`)
+        .attr('x', 0)
+        .attr('y', (d, i) => i * segmentHeight)
+        .attr('width', segmentWidth)
+        .attr('height', segmentHeight);
 }
 
 function updateForecast(data, currentHour) {
-    const nextHour = data.find(d => d.hour === (currentHour + 1) % 24);
-    if (!nextHour) return;
+    const nextHourData = data.find(d => d.hour === (currentHour + 1) % 24);
+    if (!nextHourData) return;
 
     const currentData = data.find(d => d.hour === currentHour);
-    const speedChange1 = nextHour.speed - currentData.speed;
+    const speedChange1 = nextHourData.speed - currentData.speed;
+    // Calculate confidence based on magnitude of change (larger change = lower initial confidence)
     const confidence = Math.round(100 - (Math.abs(speedChange1) * 2)); 
 
     let message;
     if (speedChange1 < -10) {
-        message = `CAUTION! Traffic is predicted to **WORSEN** from **${currentData.speed} mph** to **${nextHour.speed} mph** in the next hour.`;
+        message = `CAUTION! Traffic is predicted to **WORSEN** from **${currentData.speed} mph** to **${nextHourData.speed} mph** in the next hour.`;
     } else if (speedChange1 > 10) {
-        message = `GOOD NEWS! Traffic is predicted to significantly **IMPROVE** to **${nextHour.speed} mph** by ${timeFormatter((currentHour + 1) % 24)}.`;
+        message = `GOOD NEWS! Traffic is predicted to significantly **IMPROVE** to **${nextHourData.speed} mph** by ${timeFormatter((currentHour + 1) % 24)}.`;
     } else {
         message = `STEADY FLOW. Traffic is expected to remain stable with minor changes.`;
     }
 
-    document.getElementById('forecast-text').innerHTML = message;
-    document.getElementById('confidence-score').textContent = `Confidence: ${Math.max(65, confidence)}%`; 
-    return [(currentHour + 1) % 24, (currentHour + 2) % 24];
+    const forecastText = document.getElementById('forecast-text');
+    const confidenceScore = document.getElementById('confidence-score');
+    if (forecastText) forecastText.innerHTML = message;
+    if (confidenceScore) confidenceScore.textContent = `Confidence: ${Math.max(65, confidence)}%`; 
 }
 
 function updateMiscAlerts(currentDataPoint) {
-    document.getElementById('current-speed').textContent = currentDataPoint.speed + ' mph';
-    document.getElementById('standstill-alert').classList.toggle('hidden', currentDataPoint.speed >= 5);
-    document.getElementById('accident-info').classList.toggle('hidden', !currentDataPoint.incident);
-    document.getElementById('ped-volume').textContent = (currentDataPoint.ped_vol > 800 ? "Very High" : "High") + ` (${currentDataPoint.ped_vol} est./hr)`;
-    document.getElementById('bike-status').textContent = 'Open, ' + (currentDataPoint.bike_vol > 300 ? "High Volume" : "Normal Flow");
-    document.getElementById('last-update-time').textContent = new Date().toLocaleTimeString();
-    
+    const currentSpeedEl = document.getElementById('current-speed');
+    const standstillAlertEl = document.getElementById('standstill-alert');
+    const accidentInfoEl = document.getElementById('accident-info');
+    const pedVolumeEl = document.getElementById('ped-volume');
+    const bikeStatusEl = document.getElementById('bike-status');
+    const lastUpdateTimeEl = document.getElementById('last-update-time');
     const transitStatus = document.getElementById('subway-status');
     const ferryStatus = document.getElementById('ferry-status');
-    if (currentDataPoint.speed < 10) {
-        transitStatus.textContent = 'Severe Delays (High Ridership)';
-        transitStatus.classList = 'status-warning';
-        ferryStatus.textContent = 'On Time, Increased Load';
-        ferryStatus.classList = 'status-good';
-    } else {
-        transitStatus.textContent = 'Good Service';
-        transitStatus.classList = 'status-good';
-        ferryStatus.textContent = 'On Time';
-        ferryStatus.classList = 'status-good';
+    
+    // Font Awesome Icons
+    const standstillIcon = '<i class="fa-solid fa-hand-paper"></i>';
+    const incidentIcon = '<i class="fa-solid fa-car-burst"></i>';
+    const successIcon = '<i class="fa-solid fa-check-circle"></i>';
+
+    if (currentSpeedEl) currentSpeedEl.textContent = currentDataPoint.speed + ' mph';
+    
+    // Update standstill alert text with Font Awesome icon
+    if (standstillAlertEl) {
+        standstillAlertEl.classList.toggle('hidden', currentDataPoint.speed >= 5);
+        standstillAlertEl.innerHTML = `${standstillIcon} **STAND STILL TRAFFIC ALERT!** Speed is <span id="current-speed">${currentDataPoint.speed} mph</span> on the Manhattan-bound lanes.`;
+    }
+    
+    // Update accident alert text with Font Awesome icon
+    if (accidentInfoEl) {
+        accidentInfoEl.classList.toggle('hidden', !currentDataPoint.incident);
+        accidentInfoEl.innerHTML = `${incidentIcon} **INCIDENT ALERT:** <span id="incident-type">Major Accident</span> reported near the mid-span.`;
+    }
+    
+    // Update optimal commute alert text with Font Awesome icon
+    const bestTimeEl = document.getElementById('best-time-to-drive');
+    if (bestTimeEl) {
+        bestTimeEl.innerHTML = `${successIcon} **Optimal Commute Window:** <span id="optimal-time">10:00 AM - 11:30 AM</span>. Traffic is **25%** lighter.`;
+    }
+    
+    // Update multi-modal text
+    if (pedVolumeEl) pedVolumeEl.textContent = (currentDataPoint.ped_vol > 800 ? "Very High" : "High") + ` (${currentDataPoint.ped_vol} est./hr)`;
+    if (bikeStatusEl) bikeStatusEl.textContent = 'Open, ' + (currentDataPoint.bike_vol > 300 ? "High Volume" : "Normal Flow");
+    if (lastUpdateTimeEl) lastUpdateTimeEl.textContent = new Date().toLocaleTimeString();
+    
+    // Transit status updates based on traffic
+    if (transitStatus && ferryStatus) {
+        if (currentDataPoint.speed < 10) {
+            transitStatus.textContent = 'Severe Delays (High Ridership)';
+            transitStatus.classList = 'status-warning';
+            ferryStatus.textContent = 'On Time, Increased Load';
+            ferryStatus.classList = 'status-good';
+        } else {
+            transitStatus.textContent = 'Good Service';
+            transitStatus.classList = 'status-good';
+            ferryStatus.textContent = 'On Time';
+            ferryStatus.classList = 'status-good';
+        }
     }
 }
 
 const calculateBestTime = () => {
-    // These IDs are already in the HTML, this is just for clarity
-    document.getElementById('optimal-time').textContent = `10:00 AM - 11:30 AM`;
+    // This is hardcoded but would normally use logic to find the dip in mockTrafficData
+    const optimalTimeEl = document.getElementById('optimal-time');
+    if (optimalTimeEl) optimalTimeEl.textContent = `10:00 AM - 11:30 AM`;
 };
 
 // --- 4. INITIALIZATION AND SIMULATION LOOP ---
-let currentHour = 7; // Start simulation at a relevant time
+let currentHour = 7; // Start simulation at a relevant time (e.g., just before rush hour)
 
 function runSimulation() {
     currentHour = (currentHour + 1) % 24; 
 
-    // Find the current data point based on the hour simulation
     const currentDataPoint = mockTrafficData.find(d => d.hour === currentHour);
     if (!currentDataPoint) return;
 
     // --- Update all HTML elements ---
     updateMiscAlerts(currentDataPoint);
     updateEnvironment(currentDataPoint); 
-    updateMapSimulation(currentDataPoint);
+    updateMapSimulation(currentDataPoint); 
     updateIncidentAndHistory(currentDataPoint);
 
     // --- Draw the chart ---
-    const forecastHours = updateForecast(mockTrafficData, currentHour);
-    drawChart(mockTrafficData, historicalAverage, currentHour, forecastHours[0], forecastHours[1]);
+    updateForecast(mockTrafficData, currentHour);
+    drawChart(mockTrafficData, historicalAverage, currentHour);
 }
 
-// Initial setup on load
-calculateBestTime();
-runSimulation(); 
-// Start the simulation loop (updates every 2 seconds)
-setInterval(runSimulation, 2000);
+function init() {
+    calculateBestTime();
+    
+    const timeRangeSelector = d3.select("#time-range-selector");
+    if (!timeRangeSelector.empty()) {
+        // Redraw chart immediately when the time range selection changes
+        timeRangeSelector.on("change", () => {
+            const currentDataPoint = mockTrafficData.find(d => d.hour === currentHour);
+            if (currentDataPoint) {
+                updateForecast(mockTrafficData, currentHour);
+                drawChart(mockTrafficData, historicalAverage, currentHour);
+            }
+        });
+    }
+    
+    const patternSelector = d3.select("#pattern-selector");
+    if (!patternSelector.empty()) {
+        // Redraw chart immediately when the pattern selection changes
+        patternSelector.on("change", () => {
+            const currentDataPoint = mockTrafficData.find(d => d.hour === currentHour);
+            if (currentDataPoint) {
+                updateForecast(mockTrafficData, currentHour);
+                drawChart(mockTrafficData, historicalAverage, currentHour);
+            }
+        });
+    }
+
+    // Run simulation immediately and then set interval
+    setTimeout(() => {
+        runSimulation(); 
+        // Run the simulation every 2 seconds (simulating 1 hour passing)
+        setInterval(runSimulation, 2000); 
+    }, 100); 
+
+    // Handle responsiveness on window resize
+    window.addEventListener('resize', () => {
+        clearTimeout(window.resizeTimer);
+        window.resizeTimer = setTimeout(() => {
+            const currentDataPoint = mockTrafficData.find(d => d.hour === currentHour);
+            if (currentDataPoint) {
+                updateForecast(mockTrafficData, currentHour);
+                drawChart(mockTrafficData, historicalAverage, currentHour);
+            }
+        }, 250);
+    });
+}
+
+document.addEventListener('DOMContentLoaded', init);

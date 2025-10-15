@@ -5,18 +5,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>BridgeControl-App Multi-Modal Traffic Dashboard</title> 
     
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    
     <link rel="stylesheet" href="style.css"> 
     
     <script src="https://d3js.org/d3.v7.min.js"></script>
 </head>
 <body>
 
-    <!-- Main Section -->
-    
 <div class="traffic-dashboard">
   
   <header>
-    <h1>🌉 Brooklyn Bridge Multi-Modal Control Center 📊</h1>
+    <h1><i class="fa-solid fa-road-bridge"></i> Brooklyn Bridge Multi-Modal Control Center <i class="fa-solid fa-chart-line"></i></h1>
     <p class="subtitle">Predictive traffic, transit, and environmental data for high-stakes urban management.</p>
   </header>
 
@@ -25,7 +25,7 @@
   <section class="top-data-row">
     
     <div class="data-card prediction-panel">
-      <h2>2-Hour Traffic Forecast</h2>
+      <h2><i class="fa-solid fa-cloud-sun"></i> 2-Hour Traffic Forecast</h2>
       <div id="forecast-output" class="forecast-box">
         <p id="forecast-text">Loading forecast...</p>
         <span id="confidence-score" class="confidence-badge">Confidence: 95%</span>
@@ -33,7 +33,7 @@
     </div>
     
     <div class="data-card environment-panel">
-      <h2>Environment &amp; CO<sub>2</sub> Impact</h2> 
+      <h2><i class="fa-solid fa-leaf"></i> Environment &amp; CO<sub>2</sub> Impact</h2> 
       <p><strong>Air Quality Index (AQI):</strong> <span id="aqi-status" class="status-good">Normal</span></p>
       <p>
         <strong>Predicted CO<sub>2</sub> Score:</strong> 
@@ -43,7 +43,7 @@
     </div>
     
     <div class="data-card transit-panel">
-      <h2>NYC Transit Status</h2>
+      <h2><i class="fa-solid fa-train-subway"></i> NYC Transit Status</h2>
       <p><strong>4/5/6 Subway Line:</strong> <span id="subway-status" class="status-good">Good Service</span></p>
       <p><strong>Ferry Status (Pier 11):</strong> <span id="ferry-status" class="status-warning">Minor Delays</span></p>
     </div>
@@ -52,19 +52,19 @@
   <hr>
 
   <section class="insights-panel">
-    <h2>Current Critical Alerts</h2>
+    <h2><i class="fa-solid fa-triangle-exclamation"></i> Current Critical Alerts</h2>
     
     <div class="alerts-grid">
       <div id="standstill-alert" class="alert-box danger hidden">
-        ⚠️ **STAND STILL TRAFFIC ALERT!** Speed is <span id="current-speed">3 mph</span> on the Manhattan-bound lanes.
+        <i class="fa-solid fa-hand-paper"></i> **STAND STILL TRAFFIC ALERT!** Speed is <span id="current-speed">3 mph</span> on the Manhattan-bound lanes.
       </div>
   
       <div id="accident-info" class="alert-box warning hidden">
-        🚨 **INCIDENT ALERT:** <span id="incident-type">Major Accident</span> reported near the mid-span.
+        <i class="fa-solid fa-car-burst"></i> **INCIDENT ALERT:** <span id="incident-type">Major Accident</span> reported near the mid-span.
       </div>
   
       <div id="best-time-to-drive" class="alert-box success">
-        ✅ **Optimal Commute Window:** <span id="optimal-time">10:00 AM - 11:30 AM</span>. Traffic is **25%** lighter.
+        <i class="fa-solid fa-check-circle"></i> **Optimal Commute Window:** <span id="optimal-time">10:00 AM - 11:30 AM</span>. Traffic is **25%** lighter.
       </div>
     </div>
   </section>
@@ -74,7 +74,7 @@
   <section class="visualization-area">
     
     <div class="chart-container">
-      <h2>Vehicle Volume & Pattern</h2>
+      <h2><i class="fa-solid fa-chart-area"></i> Vehicle Volume & Pattern</h2>
       <div class="chart-controls">
         <label for="time-range-selector">Range:</label>
         <select id="time-range-selector">
@@ -98,13 +98,13 @@
     
     <div class="map-and-incident-container">
         <div class="map-container">
-            <h2>Live & Predictive Congestion Map</h2>
+            <h2><i class="fa-solid fa-map-location-dot"></i> Live & Predictive Congestion Map</h2>
             <p class="map-subtitle">Current Status (Left) vs. **Next Hour Predicted** (Right)</p>
             <div id="traffic-map">
-                <p class="map-placeholder">
-                    
-                    *Map Simulation: Current Speed (Left) vs. Predicted Speed (Right)*
-                </p>
+                <div class="map-container-inner">
+                    <div id="map-current" class="traffic-svg-map"></div> 
+                    <div id="map-predicted" class="traffic-svg-map"></div> 
+                </div>
             </div>
             
             <div class="speed-legend">
@@ -115,18 +115,18 @@
             </div>
 
             <div class="multi-modal-data">
-                <h3>🚶🚴 Multi-Modal Status</h3>
+                <h3><i class="fa-solid fa-person-walking"></i> <i class="fa-solid fa-person-biking"></i> Multi-Modal Status</h3>
                 <p><strong>Pedestrian Volume:</strong> <span id="ped-volume">High</span></p>
                 <p><strong>Bike Path Status:</strong> <span id="bike-status">Open, High Volume</span></p>
             </div>
         </div>
 
         <div class="incident-timeline">
-            <h2>Active Incidents Log</h2>
+            <h2><i class="fa-solid fa-list-check"></i> Active Incidents Log</h2>
             <ul id="incident-list">
                 <li><span class="incident-status ongoing">Ongoing</span> 08:05h - Major accident, M-B lanes.</li>
             </ul>
-            <h3>Alert History</h3>
+            <h3><i class="fa-solid fa-history"></i> Alert History</h3>
              <ul id="alert-history-list">
                 <li><span class="history-status info">Clearance</span> 06:45h - Disabled vehicle removed.</li>
             </ul>
@@ -137,7 +137,7 @@
   <hr>
 
   <section class="control-panel">
-    <h2>🚦 Control Manager Simulation</h2>
+    <h2><i class="fa-solid fa-traffic-light"></i> Control Manager Simulation</h2>
     <div class="controls-grid">
       <div>
         <label for="lane-control">Bridge Lane Direction:</label>
@@ -162,11 +162,7 @@
   
 </div>
 
-
-    <!-- END main -->
-
-
-    <script src="script.js"></script>
+<script src="script.js"></script>
 
 </body>
 </html>

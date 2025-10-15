@@ -1,27 +1,31 @@
 /* --- Global Reset & Base Styles --- */
 /* Switching to a High-Contrast Light Mode */
 body {
-  font-family: 'Roboto', 'Segoe UI', Arial, sans-serif;
-  background-color: #F8F9FA; /* Light background */
-  margin: 0;
-  padding: 20px;
-  color: #343A40; /* Dark text for contrast */
+    font-family: 'Roboto', 'Segoe UI', Arial, sans-serif;
+    background-color: #F8F9FA; /* Light background */
+    margin: 0;
+    padding: 20px;
+    color: #343A40; /* Dark text for contrast */
 }
 
 .traffic-dashboard {
-  max-width: 1400px;
-  margin: 0 auto;
-  padding: 30px;
-  background-color: #FFFFFF; /* White surface */
-  border-radius: 12px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 30px;
+    background-color: #FFFFFF; /* White surface */
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
 }
 
 header h1 {
-  color: #007BFF; /* Primary blue for main title */
-  font-size: 2.8em;
-  border-bottom: 3px solid #E9ECEF;
-  padding-bottom: 10px;
+    color: #00008B; /* CHANGED: New Dark Blue Color for main text */
+    font-size: 2.8em;
+    border-bottom: 3px solid #E9ECEF;
+    padding-bottom: 10px;
+}
+header h1 i {
+    color: #CCCCCC; /* CHANGED: New Light Grey Color for icons */
+    margin-right: 10px;
 }
 .subtitle {
     color: #6C757D;
@@ -29,10 +33,10 @@ header h1 {
 }
 
 hr {
-  border: 0;
-  height: 1px;
-  background-color: #DEE2E6;
-  margin: 30px 0;
+    border: 0;
+    height: 1px;
+    background-color: #DEE2E6;
+    margin: 30px 0;
 }
 
 /* --- TOP DATA ROW: Cards --- */
@@ -40,9 +44,11 @@ hr {
     display: flex;
     gap: 20px;
     margin-bottom: 20px;
+    flex-wrap: wrap; /* Added for responsiveness */
 }
 .data-card {
     flex: 1;
+    min-width: 280px; /* Ensure cards don't get too small before wrapping */
     padding: 20px;
     border-radius: 8px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
@@ -53,6 +59,9 @@ hr {
     border-bottom: 1px solid #F1F3F5;
     padding-bottom: 5px;
     margin-top: 0;
+}
+.data-card h2 i {
+    margin-right: 8px;
 }
 .prediction-panel { border-left-color: #007BFF; background-color: #F0F8FF; } /* Light Blue accent */
 .environment-panel { border-left-color: #28A745; background-color: #F0FFF0; } /* Light Green accent */
@@ -73,16 +82,29 @@ hr {
 }
 
 /* --- Alert Grid and Boxes --- */
+.insights-panel h2 i {
+    margin-right: 8px;
+}
 .alerts-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
     gap: 15px;
 }
-.alert-box { font-size: 1em; color: #343A40; padding: 15px; border-radius: 6px; }
+.alert-box { 
+    font-size: 1em; 
+    color: #343A40; 
+    padding: 15px; 
+    border-radius: 6px; 
+    font-weight: 600; /* Increased font weight for alerts */
+}
+.alert-box i {
+    margin-right: 8px;
+}
 .alert-box.danger { background-color: #F8D7DA; border-left: 5px solid #DC3545; }
 .alert-box.warning { background-color: #FFF3CD; border-left: 5px solid #FFC107; }
 .alert-box.success { background-color: #D4EDDA; border-left: 5px solid #28A745; }
 .alert-box.danger, .alert-box.warning { color: #495057; }
+.alert-box.hidden { display: none; }
 
 
 /* --- Visualization Area --- */
@@ -98,32 +120,87 @@ hr {
     border-radius: 8px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 }
-.chart-controls { margin-bottom: 15px; }
-.chart-controls label { color: #6C757D; margin-right: 5px; }
+.chart-container h2, .map-and-incident-container h2 {
+    margin-top: 0;
+}
+.chart-container h2 i {
+    margin-right: 8px;
+}
+
+/* FIX: Ensure chart controls wrap correctly and maintain alignment */
+.chart-controls { 
+    margin-bottom: 15px;
+    display: flex;
+    flex-wrap: wrap; /* Allow elements to wrap */
+    gap: 10px 20px; /* Space between rows and columns */
+    align-items: center;
+}
+.chart-controls label { 
+    color: #6C757D; 
+    margin-right: 5px; 
+    white-space: nowrap; /* Keep label text together */
+}
 .chart-controls select {
     padding: 5px;
     border: 1px solid #CED4DA;
     border-radius: 4px;
     background-color: #fff;
+    min-width: 100px; /* Prevent shrinking too much */
 }
-
 
 .map-subtitle { color: #6C757D; }
 
+/* --- Map Visualization Styles --- */
 #traffic-map { 
     height: 200px; 
-    background-color: #E9ECEF; /* Light gray background for the map area */
+    background-color: #495057; /* Dark background to represent road */
     border: 1px solid #CED4DA; 
     padding: 15px;
     border-radius: 4px;
     margin-bottom: 15px;
 }
-.map-placeholder { color: #495057; }
+.map-container-inner {
+    display: flex;
+    justify-content: space-between;
+    height: 100%;
+}
+.traffic-svg-map { 
+    width: 48%; 
+    height: 100%;
+}
+
+/* Road segment styling (D3 rectangles) */
+.traffic-road-segment { 
+    fill: #495057; 
+    stroke-width: 8px; 
+    transition: stroke 0.5s ease; 
+}
+
+/* Animated dashed lines for traffic flow */
+.traffic-road-segment.animated {
+    animation: dash-animation linear infinite;
+    stroke-dasharray: 10 10; 
+    stroke-linecap: round;
+}
+
+/* Color Statuses and Animation Speeds */
+.traffic-road-segment.status-green { stroke: #00C853; animation-duration: 0.5s; }
+.traffic-road-segment.status-yellow { stroke: #FFD600; animation-duration: 1.5s; }
+.traffic-road-segment.status-red { stroke: #FF3D00; animation-duration: 3s; }
+.traffic-road-segment.status-black { stroke: #D50000; animation-duration: 0s; stroke-dasharray: none; }
+
+
+@keyframes dash-animation {
+    to {
+        stroke-dashoffset: -20;
+    }
+}
 
 /* Traffic Speed Legend */
 .speed-legend {
     display: flex;
     justify-content: space-around;
+    flex-wrap: wrap; 
     padding: 10px 0;
     margin-top: 10px;
     border-top: 1px dashed #CED4DA;
@@ -147,6 +224,9 @@ hr {
     border-radius: 4px;
     margin-top: 15px;
 }
+.multi-modal-data h3 i {
+    margin-right: 5px;
+}
 
 /* Incident Timeline & History */
 .incident-timeline { 
@@ -154,7 +234,10 @@ hr {
     padding: 20px;
     border-radius: 8px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-    margin-top: 20px; /* Separate it from the map container in small view */
+    margin-top: 20px; 
+}
+.incident-timeline h2 i, .incident-timeline h3 i {
+    margin-right: 8px;
 }
 #incident-list { padding-left: 20px; }
 #incident-list li { border-bottom: 1px dotted #E9ECEF; padding: 5px 0; }
@@ -178,13 +261,16 @@ hr {
 }
 
 
-/* --- Control Manager Panel --- */
+/* --- Control Manager Panel (for traffic managers) --- */
 .control-panel {
     background-color: #F0F8FF;
     border-top: 3px solid #007BFF;
     padding: 20px;
     border-radius: 8px;
     margin-top: 20px;
+}
+.control-panel h2 i {
+    margin-right: 8px;
 }
 .controls-grid {
     display: grid;
@@ -217,42 +303,95 @@ hr {
 /* D3.js Styling FIXES for Visibility in Light Mode */
 .axis path, 
 .axis line { 
-    stroke: #6C757D; /* Dark gray for axes */
+    stroke: #6C757D;
     fill: none;
     shape-rendering: crispEdges;
 }
 .axis text {
-    fill: #495057; /* Dark text for labels */
+    fill: #495057;
 }
 .line-historical { 
-    stroke: #6C757D; /* Dark gray dashed line for historical pattern */
+    stroke: #6C757D;
     fill: none;
-    stroke-width: 2px;
-    stroke-dasharray: 5 5; 
+    stroke-width: 1.5px;
 }
 .line-current { 
-    stroke: #007BFF; /* Primary blue for current data */
+    stroke: #194d80;
     fill: none;
-    stroke-width: 4px; /* Slightly thicker for prominence */
+    stroke-width: 3px; 
 }
 .area-current {
-    opacity: 0.4;
+    fill: #8cb3d9;
+    opacity: 0.5;
 }
 
-/* NEW: Tooltip Style */
+/* Tooltip Style */
 #tooltip {
-  background: rgba(0, 0, 0, 0.85);
-  color: white;
-  padding: 8px 12px;
-  border-radius: 6px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    background: rgba(0, 0, 0, 0.85);
+    color: white;
+    padding: 8px 12px;
+    border-radius: 6px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
 }
 
-/* Responsive Adjustments */
+/* --- Mobile and Tablet Responsiveness --- */
 @media (max-width: 1200px) {
-    .top-data-row, .visualization-area { flex-direction: column; }
-    .data-card { flex: none; width: 100%; }
-    .chart-container, .map-and-incident-container { flex: 1 1 100%; }
-    .controls-grid { grid-template-columns: 1fr 1fr; }
-    .controls-grid > div:nth-child(1), .controls-grid > div:nth-child(2) { grid-column: span 2; }
+    /* Main sections stack vertically */
+    .top-data-row, 
+    .visualization-area { 
+        flex-direction: column; 
+    }
+    .data-card { 
+        flex: 1 1 100%; /* Take full width */
+    }
+    .chart-container, 
+    .map-and-incident-container { 
+        flex: 1 1 100%; /* Take full width */
+    }
+    
+    /* Control grid stacks better */
+    .controls-grid { 
+        grid-template-columns: 1fr; /* Single column layout for controls */
+    }
+}
+
+@media (max-width: 600px) {
+    body {
+        padding: 10px;
+    }
+    .traffic-dashboard {
+        padding: 15px;
+    }
+    header h1 {
+        font-size: 2em;
+    }
+    
+    /* Ensure map elements don't get squished */
+    .map-container-inner {
+        flex-direction: column;
+        height: auto;
+    }
+    .traffic-svg-map {
+        width: 100%;
+        height: 100px; /* Give a fixed height on mobile */
+        margin-bottom: 10px;
+    }
+    .map-subtitle {
+        text-align: center;
+    }
+    
+    /* Ensure alert boxes wrap */
+    .alerts-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    /* Center text for better readability on small screens */
+    .speed-legend {
+        justify-content: flex-start;
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+    .speed-legend > * {
+        flex: 1 1 45%; /* Two items per row */
+    }
 }
