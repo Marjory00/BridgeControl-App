@@ -31,13 +31,13 @@ A visual tour of the BridgeControl-App dashboard, showcasing its real-time data 
 
 The comprehensive desktop layout provides an at-a-glance overview of all critical data, the predictive chart, and the Control Manager panel, utilizing a clean, high-contrast light theme for clarity.
 
-![Desktop Screenshot of BridgeControl-App Dashboard](assets/images/desktop-screenshot.png)
+![Desktop Screenshot of BridgeControl-App Dashboard](assets/images/screenview-mobile.png)
 
 ### Mobile / Responsive View (Alerts Focused)
 
 The layout automatically optimizes for mobile devices, ensuring traffic managers can access vital information and controls—especially the Critical Alerts and the Live Congestion Map—efficiently while on-site.
 
-![Mobile Screenshot of BridgeControl-App Alerts and Map](assets/images/mobile-screenshot.png)
+![Mobile Screenshot of BridgeControl-App Alerts and Map](assets/images/desktopview.png)
 
 ---
 
