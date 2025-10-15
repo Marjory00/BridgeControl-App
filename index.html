@@ -33,12 +33,12 @@
     </div>
     
     <div class="data-card environment-panel">
-      <h2>Environment & $\text{CO}_2$ Impact</h2>
+      <h2>Environment &amp; CO<sub>2</sub> Impact</h2> 
       <p><strong>Air Quality Index (AQI):</strong> <span id="aqi-status" class="status-good">Normal</span></p>
       <p>
-        <strong>Predicted $\text{CO}_2$ Score:</strong> 
+        <strong>Predicted CO<sub>2</sub> Score:</strong> 
         <span id="co2-score">Low</span> 
-        <span id="co2-value" class="status-metric">780 $\text{ppm}$</span>
+        <span id="co2-value" class="status-metric">780 ppm</span>
       </p>
     </div>
     
@@ -64,7 +64,7 @@
       </div>
   
       <div id="best-time-to-drive" class="alert-box success">
-        ✅ **Optimal Commute Window:** <span id="optimal-time">10:00 AM - 11:30 AM</span>. Traffic is $\mathbf{25\%}$ lighter.
+        ✅ **Optimal Commute Window:** <span id="optimal-time">10:00 AM - 11:30 AM</span>. Traffic is **25%** lighter.
       </div>
     </div>
   </section>
@@ -91,6 +91,9 @@
         </select>
       </div>
       <div id="traffic-chart"></div>
+      
+      <div id="tooltip" style="position: absolute; text-align: center; padding: 8px; font: 12px sans-serif; background: lightsteelblue; border: 0px; border-radius: 8px; pointer-events: none; opacity: 0; z-index: 10;"></div>
+
     </div>
     
     <div class="map-and-incident-container">
@@ -105,10 +108,10 @@
             </div>
             
             <div class="speed-legend">
-                <span style="background-color:#00C853;"></span> Free Flow $>35 \text{mph}$
-                <span style="background-color:#FFD600;"></span> Congested $15-35 \text{mph}$
-                <span style="background-color:#FF3D00;"></span> Heavy $5-15 \text{mph}$
-                <span style="background-color:#D50000;"></span> Stand Still $<5 \text{mph}$
+                <span style="background-color:#00C853;"></span> Free Flow &gt; 35 mph
+                <span style="background-color:#FFD600;"></span> Congested 15-35 mph
+                <span style="background-color:#FF3D00;"></span> Heavy 5-15 mph
+                <span style="background-color:#D50000;"></span> Stand Still &lt; 5 mph
             </div>
 
             <div class="multi-modal-data">
@@ -158,6 +161,7 @@
   </footer>
   
 </div>
+
 
     <!-- END main -->
 
