@@ -14,6 +14,15 @@ This project, **BridgeControl-App**, was solely **created, designed, and develop
 
 ---
 
+## 🎯 Project Overview
+
+BridgeControl-App is a **simulated, single-page application (SPA)** designed to serve as a high-stakes, real-time control center for managing multi-modal traffic flow across critical urban infrastructure, specifically demonstrated using the Brooklyn Bridge.
+
+Its core function is to fuse disparate data streams—vehicular volume, traffic speed, transit status (subway/ferry), and environmental metrics (CO₂) into one cohesive dashboard. This design empowers traffic managers to move from **reactive incident response** to **proactive, data-driven decision-making**, ultimately minimizing congestion, improving public safety, and optimizing resource allocation. The app features a fully **responsive layout** and dynamic D3.js visualizations that adapt to both desktop and mobile environments.
+
+
+---
+
 ## 💡 Case Study: Congestion on the Brooklyn Bridge
 
 ### Why was this app designed?
