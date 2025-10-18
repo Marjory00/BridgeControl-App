@@ -1,10 +1,10 @@
 
-# 🌉 BridgeControl-App: Multi-Modal Traffic & Incident Dashboard
+#  BridgeControl-App: Multi-Modal Traffic & Incident Dashboard
 
 [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![GitHub stars](https://img.shields.io/github/stars/Marjory00/BridgeControl-App?style=social)](https://github.com/Marjory00/BridgeControl-App)
 
-## ✍️ Author & Portfolio Notice
+##  Author & Portfolio Notice
 
 This project, **BridgeControl-App**, was solely **created, designed, and developed by Marjory D. Marquez** as a technical demonstration for a professional portfolio.
 
@@ -14,7 +14,7 @@ This project, **BridgeControl-App**, was solely **created, designed, and develop
 
 ---
 
-## 🎯 Project Overview
+##  Project Overview
 
 BridgeControl-App is a **simulated, single-page application (SPA)** designed to serve as a high-stakes, real-time control center for managing multi-modal traffic flow across critical urban infrastructure, specifically demonstrated using the Brooklyn Bridge.
 
@@ -23,7 +23,7 @@ Its core function is to fuse disparate data streams—vehicular volume, traffic 
 
 ---
 
-## 📸 Application Screenshots
+##  Application Screenshots
 
 A visual tour of the BridgeControl-App dashboard, showcasing its real-time data integration and responsive design across different environments.
 
@@ -41,7 +41,7 @@ The layout automatically optimizes for mobile devices, ensuring traffic managers
 
 ---
 
-## 💡 Case Study: Congestion on the Brooklyn Bridge
+##  Case Study: Congestion on the Brooklyn Bridge
 
 ### Project Summary
 
@@ -60,7 +60,7 @@ The primary need is to transition from *reactive* incident response to *proactiv
 
 ---
 
-## 💻 Technical Details
+##  Technical Details
 
 ### Technologies Used in this Project
 
@@ -86,7 +86,7 @@ The concept of a unified, predictive, and multi-modal traffic control dashboard 
 
 ---
 
-## 📁 File Structure
+##  File Structure
 
 The project is structured with a clear separation of concerns, utilizing the main folder `BridgeControl` as the root for Git version control.
 
@@ -101,7 +101,7 @@ The project is structured with a clear separation of concerns, utilizing the mai
 ```
 ---
 
-## 🚀 Getting Started
+##  Getting Started
 
 To view and interact with this dashboard:
 
